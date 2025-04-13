@@ -6,6 +6,13 @@ export type Json =
   | { [key: string]: Json }
   | Json[]
 
+// Define reusable metadata types
+export type PhotoMetadata = {
+  size?: number
+  description?: string
+  tags?: string[]
+}
+
 export interface Database {
   public: {
     Tables: {
@@ -25,7 +32,7 @@ export interface Database {
           image_url: string | null
           treatment_details: string | null
           status_changes: string[] | null
-          metadata?: Json
+          metadata: PhotoMetadata | null
         }
         Insert: {
           id?: string
@@ -42,7 +49,7 @@ export interface Database {
           image_url?: string | null
           treatment_details?: string | null
           status_changes?: string[] | null
-          metadata?: Json
+          metadata?: PhotoMetadata | null
         }
         Update: Partial<Omit<Database['public']['Tables']['animals']['Insert'], 'id'>> & { id?: string }
       }
@@ -56,6 +63,7 @@ export interface Database {
           application_data: Json
           review_notes: string | null
           reviewed_by: string | null
+          reviewed_at: string | null
         }
         Insert: {
           id?: string
@@ -66,6 +74,7 @@ export interface Database {
           application_data: Json
           review_notes?: string | null
           reviewed_by?: string | null
+          reviewed_at?: string | null
         }
         Update: Partial<Omit<Database['public']['Tables']['adoption_applications']['Insert'], 'id'>> & { id?: string }
       }
@@ -77,7 +86,7 @@ export interface Database {
           is_primary: boolean
           created_at: string
           uploaded_by: string
-          metadata?: Json
+          metadata: PhotoMetadata | null
         }
         Insert: {
           id?: string
@@ -86,7 +95,7 @@ export interface Database {
           is_primary: boolean
           created_at?: string
           uploaded_by: string
-          metadata?: Json
+          metadata?: PhotoMetadata | null
         }
         Update: Partial<Omit<Database['public']['Tables']['animal_photos']['Insert'], 'id'>> & { id?: string }
       }
@@ -138,7 +147,8 @@ export interface Database {
           shelter_id: string
           donor_id: string | null
           status: string
-          email?: string | null
+          email: string | null
+          is_anonymous: boolean
         }
         Insert: {
           id?: string
@@ -148,6 +158,7 @@ export interface Database {
           donor_id?: string | null
           status: string
           email?: string | null
+          is_anonymous?: boolean
         }
         Update: Partial<Omit<Database['public']['Tables']['donations']['Insert'], 'id'>> & { id?: string }
       }
@@ -175,7 +186,7 @@ export type Donation = Database['public']['Tables']['donations']['Row']
 export type DonationInsert = Database['public']['Tables']['donations']['Insert']
 export type DonationUpdate = Database['public']['Tables']['donations']['Update']
 
-// Add StatusChange type if needed
+// Additional utility types
 export type StatusChange = {
   status: string
   timestamp: string
