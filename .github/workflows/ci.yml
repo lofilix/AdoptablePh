@@ -1,0 +1,44 @@
+# Name of your workflow that will appear in GitHub Actions
+name: AdoptablePh CI
+
+# Defines when this workflow will run
+on:
+  push:
+    branches: [ master ]  # Runs when you push to master branch
+  pull_request:
+    branches: [ master ]  # Runs when a PR is made to master branch
+
+# The actual jobs to run
+jobs:
+  build:
+    runs-on: ubuntu-latest  # Uses Ubuntu as the operating system
+
+    steps:
+    # Checks out your repository code
+    - uses: actions/checkout@v3
+    
+    # Sets up Node.js environment
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'  # Using Node.js 18 for Next.js 14
+        
+    # Installs project dependencies
+    - name: Install dependencies
+      run: npm ci  # Clean install of dependencies
+      
+    # Checks TypeScript types
+    - name: Type check
+      run: npm run type-check || npm run tsc
+      
+    # Runs ESLint
+    - name: Lint
+      run: npm run lint
+      
+    # Builds the Next.js project
+    - name: Build
+      run: npm run build
+      env:
+        # Uses your Supabase credentials securely
+        NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
