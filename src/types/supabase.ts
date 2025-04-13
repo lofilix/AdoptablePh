@@ -8,9 +8,9 @@ export type Json =
 
 // Define reusable metadata types
 export type PhotoMetadata = {
-  size?: number
-  description?: string
-  tags?: string[]
+  size: number
+  description: string
+  tags: string[]
 }
 
 export interface Database {
@@ -31,8 +31,12 @@ export interface Database {
           description: string | null
           image_url: string | null
           treatment_details: string | null
-          status_changes: string[] | null
-          metadata: PhotoMetadata | null
+          status_changes: {
+            status: string
+            timestamp: string
+            notes?: string
+          }[] | null
+          metadata: Partial<PhotoMetadata> | null
         }
         Insert: {
           id?: string
@@ -48,10 +52,14 @@ export interface Database {
           description?: string | null
           image_url?: string | null
           treatment_details?: string | null
-          status_changes?: string[] | null
-          metadata?: PhotoMetadata | null
+          status_changes?: {
+            status: string
+            timestamp: string
+            notes?: string
+          }[] | null
+          metadata?: Partial<PhotoMetadata> | null
         }
-        Update: Partial<Omit<Database['public']['Tables']['animals']['Insert'], 'id'>> & { id?: string }
+        Update: Partial<Omit<Database['public']['Tables']['animals']['Row'], 'id'>> & { id?: string }
       }
       adoption_applications: {
         Row: {
@@ -76,7 +84,7 @@ export interface Database {
           reviewed_by?: string | null
           reviewed_at?: string | null
         }
-        Update: Partial<Omit<Database['public']['Tables']['adoption_applications']['Insert'], 'id'>> & { id?: string }
+        Update: Partial<Omit<Database['public']['Tables']['adoption_applications']['Row'], 'id'>> & { id?: string }
       }
       animal_photos: {
         Row: {
@@ -86,7 +94,7 @@ export interface Database {
           is_primary: boolean
           created_at: string
           uploaded_by: string
-          metadata: PhotoMetadata | null
+          metadata: Partial<PhotoMetadata> | null
         }
         Insert: {
           id?: string
@@ -95,9 +103,9 @@ export interface Database {
           is_primary: boolean
           created_at?: string
           uploaded_by: string
-          metadata?: PhotoMetadata | null
+          metadata?: Partial<PhotoMetadata> | null
         }
-        Update: Partial<Omit<Database['public']['Tables']['animal_photos']['Insert'], 'id'>> & { id?: string }
+        Update: Partial<Omit<Database['public']['Tables']['animal_photos']['Row'], 'id'>> & { id?: string }
       }
       shelters: {
         Row: {
@@ -122,7 +130,7 @@ export interface Database {
           logo_url?: string | null
           description?: string | null
         }
-        Update: Partial<Omit<Database['public']['Tables']['shelters']['Insert'], 'id'>> & { id?: string }
+        Update: Partial<Omit<Database['public']['Tables']['shelters']['Row'], 'id'>> & { id?: string }
       }
       profiles: {
         Row: {
@@ -137,7 +145,7 @@ export interface Database {
           role: string
           created_at?: string
         }
-        Update: Partial<Omit<Database['public']['Tables']['profiles']['Insert'], 'id'>> & { id?: string }
+        Update: Partial<Omit<Database['public']['Tables']['profiles']['Row'], 'id'>> & { id?: string }
       }
       donations: {
         Row: {
@@ -149,6 +157,7 @@ export interface Database {
           status: string
           email: string | null
           is_anonymous: boolean
+          donation_type: string
         }
         Insert: {
           id?: string
@@ -159,8 +168,9 @@ export interface Database {
           status: string
           email?: string | null
           is_anonymous?: boolean
+          donation_type: string
         }
-        Update: Partial<Omit<Database['public']['Tables']['donations']['Insert'], 'id'>> & { id?: string }
+        Update: Partial<Omit<Database['public']['Tables']['donations']['Row'], 'id'>> & { id?: string }
       }
     }
   }
