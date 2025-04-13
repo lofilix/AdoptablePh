@@ -13,6 +13,8 @@ export type PhotoMetadata = {
   tags: string[]
 }
 
+export type DonationType = 'general' | 'medical' | 'shelter'
+
 export interface Database {
   public: {
     Tables: {
@@ -31,12 +33,7 @@ export interface Database {
           description: string | null
           image_url: string | null
           treatment_details: string | null
-          status_changes: {
-            status: string
-            timestamp: string
-            notes?: string
-          }[] | null
-          metadata: Partial<PhotoMetadata> | null
+          metadata: Json | null
         }
         Insert: {
           id?: string
@@ -52,39 +49,32 @@ export interface Database {
           description?: string | null
           image_url?: string | null
           treatment_details?: string | null
-          status_changes?: {
-            status: string
-            timestamp: string
-            notes?: string
-          }[] | null
-          metadata?: Partial<PhotoMetadata> | null
+          metadata?: Json | null
         }
         Update: Partial<Omit<Database['public']['Tables']['animals']['Row'], 'id'>> & { id?: string }
       }
-      adoption_applications: {
+      status_changes: {
         Row: {
           id: string
-          created_at: string
-          animal_id: string
-          user_id: string
-          status: string
-          application_data: Json
-          review_notes: string | null
-          reviewed_by: string | null
-          reviewed_at: string | null
+          entity_type: string
+          entity_id: string
+          old_status: string
+          new_status: string
+          changed_at: string
+          changed_by: string
+          metadata: Json | null
         }
         Insert: {
           id?: string
-          created_at?: string
-          animal_id: string
-          user_id: string
-          status: string
-          application_data: Json
-          review_notes?: string | null
-          reviewed_by?: string | null
-          reviewed_at?: string | null
+          entity_type: string
+          entity_id: string
+          old_status: string
+          new_status: string
+          changed_at?: string
+          changed_by: string
+          metadata?: Json | null
         }
-        Update: Partial<Omit<Database['public']['Tables']['adoption_applications']['Row'], 'id'>> & { id?: string }
+        Update: Partial<Omit<Database['public']['Tables']['status_changes']['Row'], 'id'>> & { id?: string }
       }
       animal_photos: {
         Row: {
@@ -94,7 +84,7 @@ export interface Database {
           is_primary: boolean
           created_at: string
           uploaded_by: string
-          metadata: Partial<PhotoMetadata> | null
+          metadata: Json | null
         }
         Insert: {
           id?: string
@@ -103,7 +93,7 @@ export interface Database {
           is_primary: boolean
           created_at?: string
           uploaded_by: string
-          metadata?: Partial<PhotoMetadata> | null
+          metadata?: Json | null
         }
         Update: Partial<Omit<Database['public']['Tables']['animal_photos']['Row'], 'id'>> & { id?: string }
       }
@@ -157,7 +147,7 @@ export interface Database {
           status: string
           email: string | null
           is_anonymous: boolean
-          donation_type: string
+          donation_type: DonationType
         }
         Insert: {
           id?: string
@@ -168,7 +158,7 @@ export interface Database {
           status: string
           email?: string | null
           is_anonymous?: boolean
-          donation_type: string
+          donation_type: DonationType
         }
         Update: Partial<Omit<Database['public']['Tables']['donations']['Row'], 'id'>> & { id?: string }
       }
@@ -180,25 +170,31 @@ export interface Database {
 export type Animal = Database['public']['Tables']['animals']['Row']
 export type AnimalInsert = Database['public']['Tables']['animals']['Insert']
 export type AnimalUpdate = Database['public']['Tables']['animals']['Update']
+
+export type StatusChange = Database['public']['Tables']['status_changes']['Row']
+export type StatusChangeInsert = Database['public']['Tables']['status_changes']['Insert']
+export type StatusChangeUpdate = Database['public']['Tables']['status_changes']['Update']
+
 export type AnimalPhoto = Database['public']['Tables']['animal_photos']['Row']
 export type AnimalPhotoInsert = Database['public']['Tables']['animal_photos']['Insert']
 export type AnimalPhotoUpdate = Database['public']['Tables']['animal_photos']['Update']
-export type AdoptionApplication = Database['public']['Tables']['adoption_applications']['Row']
-export type AdoptionApplicationInsert = Database['public']['Tables']['adoption_applications']['Insert']
-export type AdoptionApplicationUpdate = Database['public']['Tables']['adoption_applications']['Update']
-export type Shelter = Database['public']['Tables']['shelters']['Row']
-export type ShelterInsert = Database['public']['Tables']['shelters']['Insert']
-export type ShelterUpdate = Database['public']['Tables']['shelters']['Update']
-export type Profile = Database['public']['Tables']['profiles']['Row']
-export type ProfileInsert = Database['public']['Tables']['profiles']['Insert']
-export type ProfileUpdate = Database['public']['Tables']['profiles']['Update']
+
 export type Donation = Database['public']['Tables']['donations']['Row']
 export type DonationInsert = Database['public']['Tables']['donations']['Insert']
 export type DonationUpdate = Database['public']['Tables']['donations']['Update']
 
-// Additional utility types
-export type StatusChange = {
-  status: string
-  timestamp: string
-  notes?: string
+export type Shelter = Database['public']['Tables']['shelters']['Row']
+export type ShelterInsert = Database['public']['Tables']['shelters']['Insert']
+export type ShelterUpdate = Database['public']['Tables']['shelters']['Update']
+
+export type Profile = Database['public']['Tables']['profiles']['Row']
+export type ProfileInsert = Database['public']['Tables']['profiles']['Insert']
+export type ProfileUpdate = Database['public']['Tables']['profiles']['Update']
+
+// Helper type for metadata
+export type JsonMetadata = {
+  size?: number
+  description?: string
+  tags?: string[]
+  [key: string]: any
 }
